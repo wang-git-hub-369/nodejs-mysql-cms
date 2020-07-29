@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+		<title>编辑用户</title>
+		<!-- Bootstrap -->
+		<link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="lib/bootstrap/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" type="text/css" href="lib/Validform_v5.3.2/css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+		<!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+		<!--[if lt IE 9]>
+      <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+	</head>
+
+	<body>
+		<!-- header -->
+		<header></header>
+		<div class="main">
+			<div class="left-side"></div>
+			<div class="right-content">
+				<div class="panel panel-primary">
+					<div class="panel-heading">用户详情</div>
+					<div class="panel-body">
+						<form class="form form-horizontal" id='form' action="/admin/info" method="post" >
+							<input name="id" type="hidden" />
+							<div class="form-group">
+								<label class="col-sm-2 control-label">
+									用户名:
+									<span class="text-danger">*</span>
+								</label>
+								<div class="col-sm-10">
+									<input type="text" name="username" datatype='s3-20' errormsg="昵称至少3个字符,最多16个字符！" class="form-control" readonly>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">
+									姓名:
+									<span class="text-danger">*</span>
+								</label>
+								<div class="col-sm-10">
+									<input type="text" name="fullname" class="form-control" datatype="*2-28" errormsg="名字范围在2~28位之间！">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">
+									性别:
+									<span class="text-danger">*</span>
+								</label>
+								<div class="col-sm-10">
+									<label class="radio-inline">
+										<input type="radio" name="sex" value="男" id="men"> 男
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="sex" datatype="*" value="女" id="women"> 女
+									</label>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">
+									手机:
+									<span class="text-danger">*</span>
+								</label>
+								<div class="col-sm-10">
+									<input type="text" name="tel" datatype="m" errormsg="请输入正确的手机号！" class="form-control">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">
+									邮箱:
+									<span class="text-danger">*</span>
+								</label>
+								<div class="col-sm-10">
+									<input type="text" name="email" datatype="e" errormsg="请输入正确的邮箱地址！" class="form-control">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">
+									头像:
+									<span class="text-danger">*</span>
+								</label>
+								<div class="col-sm-10">
+									<div class="upload-box uploaded  text-center">
+										<div class="plus">
+											<span class="glyphicon glyphicon-plus"></span>
+											<input class="file" type="file">
+										</div>
+										<img src="img/1.jpg" alt="">
+										<div class="cover">
+											<span class="glyphicon glyphicon-trash delete"></span>
+										</div>
+									</div>
+									<input name="avatar" type="hidden" datatype='*' nullmsg='请上传一张图片!' />
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-offset-2 col-sm-10">
+									<button type="submit" id="saveBtn" class="btn btn-primary">保存修改</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+		<script src="lib/jQuery/jquery-1.12.4.min.js"></script>
+		<!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+		<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+		<!-- 引入表单验证 -->
+		<script src="lib/Validform_v5.3.2/Validform_v5.3.2_min.js" type="text/javascript" charset="utf-8"></script>
+		<!-- 引入layer弹层 -->
+		<script src="lib/layer/layer.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/load.js"></script>
+		<!-- 删除图片 -->
+		<script type="text/javascript">
+			$(".upload-box .delete").click(function(){
+				//提取删除的父元素的兄弟元素img的src属性
+				var src=$(this).parent().siblings('img').attr('src');
+				//使用indexOf这个方法检索src这个字符串
+				var i=src.indexOf('default');
+
+				if(i >=0){
+					$('.upload-box').removeClass('uploaded');
+					return;
+				}
+				//物理删除图片
+				//replace替换字符串  在正则表达式中\/这样代表/
+				src=src.replace(/.*\/images/,'images');
+				//发送ajax后台进行删除
+				$.post('/upload/delete',{src:src},function(res){
+					if(res.status){
+						//删除成功
+						layer.msg(res.msg);
+						$('.upload-box').removeClass('uploaded');
+					}else{
+						//删除失败
+						layer.msg(res.msg);
+					}
+				})
+			})
+		</script>
+		<!-- 上传文件 -->
+		<script type="text/javascript">
+			$('.file').change(function(e){
+				//获取File对象
+				var oFile=e.target.files[0];
+				//上传文件
+				var formData=new FormData;
+				//追加数据,这里的oFile对应的是124行的oFile
+				formData.append('file', oFile);
+				//第二个参数代表上传的图片类型
+				formData.append('type', 'avatar');
+				$.ajax({
+					type:'post',
+					url:'/upload/common/',
+					data:formData,
+					//contentType:false,processData:false,这两个值表示的是对传递上服务器的图片不
+					// 进行处理
+					contentType:false,
+					processData:false,
+					success:function(res){
+						if(res.status){
+							layer.msg(res.msg);
+							//找到img标签，修改他的src属性，让这个src属性等于上传的图片地址
+							$('.upload-box img').attr('src',res.data);
+							//添加这个class名称，显示图片
+							$('.upload-box').addClass('uploaded')
+						}else{
+							layer.msg(res.msg);
+						}
+					}
+				});
+			});
+		</script>
+		<script type="text/javascript">
+			//获取地址栏参数  GetRequest是一个函数
+			var id = GetRequest().id;
+			// 获取个人资料
+			$.getJSON("/admin/info", {
+				id:
+				id
+			}, function(res) {
+				// 给data定义一个变量名称
+				var person = res.data;
+				$("input[name=username]").val(person.username);
+				$("input[name=fullname]").val(person.fullname);
+				var sex = person.sex;
+				if (sex == "男") {
+					$("#men").prop("checked", true);
+				} else if (sex == "女") {
+					$("#women").prop("checked", true);
+				}
+				$("input[name=tel]").val(person.tel);
+				$("input[name=email]").val(person.email);
+				$(".upload-box img").attr("src", person.avatar);
+			})
+		</script>
+	    <script type="text/javascript">
+	    	$("#form").Validform({
+				tiptype:4,
+				callback:function(res){
+					
+				}
+			})
+	    </script>
+	</body>
+
+</html>
